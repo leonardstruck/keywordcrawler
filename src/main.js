@@ -1,3 +1,4 @@
+import installExtension, { REDUX_DEVTOOLS } from "electron-devtools-installer";
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
 
@@ -17,6 +18,7 @@ const createWindow = () => {
 			contextIsolation: false,
 		},
 	});
+	installExtension(REDUX_DEVTOOLS);
 
 	// and load the index.html of the app.
 	mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
