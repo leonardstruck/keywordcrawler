@@ -1,5 +1,6 @@
 import lineReader from "line-reader";
 import { v4 as uuid } from "uuid";
+import isValidDomain from "is-valid-domain";
 
 export default function (fileLocation) {
 	const promise = new Promise((resolve, reject) => {
@@ -8,7 +9,7 @@ export default function (fileLocation) {
 			fileLocation,
 			{ separator: /\r\n?|\n/ },
 			(line) => {
-				if (line.length > 0) {
+				if (line.length > 0 && isValidDomain(line)) {
 					const uid = uuid();
 					result.push({ domain: line, id: uid, status: "pending" });
 				}

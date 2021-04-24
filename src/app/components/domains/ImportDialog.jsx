@@ -56,6 +56,7 @@ export const ImportDialog = (props) => {
 									files[0] &&
 									props.setImportState({ fileSelected: true, file: files[0] })
 								}
+								accept=".txt"
 							/>
 						</EuiModalBody>
 					</EuiModal>
