@@ -10,12 +10,12 @@ export const MainView = () => {
 	};
 	return (
 		<EuiFlexGroup style={fullHeight}>
-			<EuiFlexItem style={{ ...fullHeight, width: "65%" }} grow={false}>
+			<EuiFlexItem style={{ ...fullHeight, width: "55%" }} grow={false}>
 				<EuiPanel>
 					<Domains />
 				</EuiPanel>
 			</EuiFlexItem>
-			<EuiFlexItem style={{ ...fullHeight, width: "35%" }} grow={false}>
+			<EuiFlexItem style={{ ...fullHeight, width: "45%" }} grow={false}>
 				<EuiFlexGroup style={fullHeight} direction="column">
 					<EuiFlexItem>
 						<EuiPanel>

@@ -29,10 +29,9 @@ export const DomainTable = () => {
 		{
 			field: "domain",
 			name: "Domain",
-			width: "60%",
+			width: "80%",
 			footer: <span>Total number of entries: {pagination.totalItemCount}</span>,
 		},
-		{ field: "status", name: "Status" },
 		{
 			name: "Actions",
 			actions,
