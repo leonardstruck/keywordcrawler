@@ -4,7 +4,7 @@ import {
 	EuiFormRow,
 	EuiFieldText,
 	EuiForm,
-	EuiButtonIcon,
+	EuiButton,
 	EuiSpacer,
 } from "@elastic/eui";
 import React, { useState } from "react";
@@ -55,12 +55,13 @@ export const Domains = () => {
 						</EuiFormRow>
 					</EuiFlexItem>
 					<EuiFlexItem grow={false}>
-						<EuiButtonIcon
+						<EuiButton
 							iconType="importAction"
 							size="m"
-							aria-label="import bulk data"
 							onClick={() => setIsImportDialogVisible(true)}
-						/>
+						>
+							Import
+						</EuiButton>
 					</EuiFlexItem>
 				</EuiFlexGroup>
 			</EuiForm>

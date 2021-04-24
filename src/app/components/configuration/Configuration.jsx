@@ -1,33 +1,22 @@
-import { EuiFlexGroup, EuiFlexItem, EuiPanel, EuiTitle } from "@elastic/eui";
-
+import { EuiComboBox, EuiFormRow } from "@elastic/eui";
 import React from "react";
-import { Domains } from "../domains/Domains.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { addKeyword, changeKeywords } from "./keywordsSlice";
 
 export const Configuration = () => {
-	const fullHeight = {
-		height: "100%",
+	const dispatch = useDispatch();
+	const onCreateOption = (keyword) => {
+		dispatch(addKeyword({ label: keyword }));
 	};
 	return (
-		<EuiFlexGroup style={fullHeight}>
-			<EuiFlexItem style={{ ...fullHeight, width: "70%" }} grow={false}>
-				<EuiPanel>
-					<Domains />
-				</EuiPanel>
-			</EuiFlexItem>
-			<EuiFlexItem style={{ ...fullHeight, width: "30%" }} grow={false}>
-				<EuiFlexGroup style={fullHeight} direction="column">
-					<EuiFlexItem>
-						<EuiPanel>
-							<EuiTitle size="xs">
-								<h1>configuration</h1>
-							</EuiTitle>
-						</EuiPanel>
-					</EuiFlexItem>
-					<EuiFlexItem>
-						<EuiPanel></EuiPanel>
-					</EuiFlexItem>
-				</EuiFlexGroup>
-			</EuiFlexItem>
-		</EuiFlexGroup>
+		<EuiFormRow>
+			<EuiComboBox
+				noSuggestions
+				placeholder="add keywords to search for"
+				selectedOptions={useSelector((state) => state.keywords)}
+				onCreateOption={onCreateOption}
+				onChange={(event) => dispatch(changeKeywords(event))}
+			/>
+		</EuiFormRow>
 	);
 };
