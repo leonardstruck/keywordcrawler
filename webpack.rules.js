@@ -1,5 +1,3 @@
-const isDevelopment = process.env.NODE_ENV === "development";
-
 module.exports = [
 	// Add support for native node modules
 	{
@@ -23,9 +21,6 @@ module.exports = [
 			options: {
 				exclude: /node_modules/,
 				presets: ["@babel/preset-react"],
-				plugins: [
-					isDevelopment && require.resolve("react-refresh/babel"),
-				].filter(Boolean),
 			},
 		},
 	},

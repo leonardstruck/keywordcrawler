@@ -1,4 +1,7 @@
-import installExtension, { REDUX_DEVTOOLS } from "electron-devtools-installer";
+import installExtension, {
+	REDUX_DEVTOOLS,
+	REACT_DEVELOPER_TOOLS,
+} from "electron-devtools-installer";
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
 
@@ -13,12 +16,13 @@ const createWindow = () => {
 	const mainWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
+		resizable: false,
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: false,
 		},
 	});
-	installExtension(REDUX_DEVTOOLS);
+	installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS]);
 
 	// and load the index.html of the app.
 	mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);

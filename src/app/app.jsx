@@ -8,14 +8,15 @@ if (module.hot) {
 
 import { Provider } from "react-redux";
 import store from "./store";
+import { Configuration } from "./components/configuration/Configuration.jsx";
 
 export const App = () => {
-	return <h1>Test</h1>;
+	return <h1>App</h1>;
 };
 
 ReactDOM.render(
 	<Provider store={store}>
-		<App />
+		<Configuration />
 	</Provider>,
 	document.getElementById("app")
 );

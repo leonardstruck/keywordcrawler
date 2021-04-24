@@ -15,7 +15,7 @@ module.exports = {
 	},
 	plugins: [
 		// ... other plugins
-		isDevelopment && new webpack.HotModuleReplacementPlugin(),
-		isDevelopment && new ReactRefreshWebpackPlugin(),
+		isDevelopment &&
+			new ReactRefreshWebpackPlugin({ overlay: { sockIntegration: "whm" } }),
 	].filter(Boolean),
 };
