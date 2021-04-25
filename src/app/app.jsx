@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy } from "react";
 import ReactDOM from "react-dom";
 
 //fast refresh
@@ -9,14 +9,22 @@ if (module.hot) {
 import { Provider } from "react-redux";
 import store from "./store";
 import { MainView } from "./components/MainView.jsx";
+import { ipcRenderer } from "electron";
 
-export const App = () => {
-	return <h1>App</h1>;
-};
-
-ReactDOM.render(
-	<Provider store={store}>
-		<MainView />
-	</Provider>,
-	document.getElementById("app")
-);
+ipcRenderer
+	.invoke("getDarkTheme")
+	.then((result) => {
+		if (result) {
+			import("@elastic/eui/dist/eui_theme_dark.css");
+		} else {
+			import("@elastic/eui/dist/eui_theme_light.css");
+		}
+	})
+	.then(() => {
+		ReactDOM.render(
+			<Provider store={store}>
+				<MainView />
+			</Provider>,
+			document.getElementById("app")
+		);
+	});

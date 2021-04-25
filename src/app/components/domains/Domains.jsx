@@ -8,7 +8,7 @@ import {
 	EuiSpacer,
 } from "@elastic/eui";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { DomainTable } from "./DomainTable.jsx";
 import { addDomain } from "./domainSlice";
 import { v4 as uuid } from "uuid";
@@ -17,6 +17,7 @@ import { ImportDialog } from "./ImportDialog.jsx";
 
 export const Domains = () => {
 	const [domain, setDomain] = useState("");
+	const crawlerConfig = useSelector((state) => state.crawler);
 	const [isImportDialogVisible, setIsImportDialogVisible] = useState(false);
 	const [importState, setImportState] = useState({ fileSelected: false });
 	const [invalidInput, setInvalidInput] = useState(false);
@@ -45,6 +46,7 @@ export const Domains = () => {
 							<EuiFieldText
 								isInvalid={invalidInput}
 								value={domain}
+								disabled={crawlerConfig.running}
 								name="domain"
 								placeholder="type in domain name"
 								onChange={(e) => {
@@ -59,6 +61,7 @@ export const Domains = () => {
 							iconType="importAction"
 							size="m"
 							onClick={() => setIsImportDialogVisible(true)}
+							disabled={crawlerConfig.running}
 						>
 							Import
 						</EuiButton>
@@ -66,7 +69,7 @@ export const Domains = () => {
 				</EuiFlexGroup>
 			</EuiForm>
 			<EuiSpacer size="m" />
-			<DomainTable />
+			{!crawlerConfig.running && <DomainTable />}
 			<ImportDialog
 				isImportDialogVisible={isImportDialogVisible}
 				setImportState={setImportState}

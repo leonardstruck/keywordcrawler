@@ -28,7 +28,6 @@
 
 import("./app/app.jsx");
 import("./index.css");
-import "@elastic/eui/dist/eui_theme_light.css";
 
 console.log(
 	'👋 This message is being logged by "renderer.js", included via webpack'

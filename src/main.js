@@ -2,7 +2,7 @@ import installExtension, {
 	REDUX_DEVTOOLS,
 	REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, nativeTheme, ipcMain } = require("electron");
 const path = require("path");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -55,3 +55,9 @@ app.on("activate", () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+//get Theme
+ipcMain.handle("getDarkTheme", async (event) => {
+	const result = nativeTheme.shouldUseDarkColors;
+	return result;
+});

@@ -31,6 +31,7 @@ export const Configuration = () => {
 					selectedOptions={keywords}
 					onCreateOption={onCreateOption}
 					onChange={(event) => dispatch(changeKeywords(event))}
+					isDisabled={crawlerConfig.running}
 				/>
 			</EuiFormRow>
 			<EuiHorizontalRule />
@@ -40,6 +41,7 @@ export const Configuration = () => {
 					checked={crawlerConfig.crawlSitemap}
 					onChange={(e) => toggle(e)}
 					name="crawlSitemap"
+					disabled={crawlerConfig.running}
 				/>
 				<EuiSpacer size="s" />
 				{keywords.length > 1 && (
@@ -49,6 +51,7 @@ export const Configuration = () => {
 							checked={crawlerConfig.skipOnOccurance}
 							onChange={(e) => toggle(e)}
 							name="skipOnOccurance"
+							disabled={crawlerConfig.running}
 						/>
 						<EuiSpacer size="s" />
 					</div>
@@ -58,15 +61,17 @@ export const Configuration = () => {
 					checked={crawlerConfig.relativeCrawling}
 					onChange={(e) => toggle(e)}
 					name="relativeCrawling"
+					disabled={crawlerConfig.running}
 				/>
 				<EuiSpacer size="s" />
 				{crawlerConfig.relativeCrawling && (
 					<div>
 						<EuiSwitch
-							label="limit amount of relative hyperlinks"
+							label="limit amount of relative hyperlinks per crawl"
 							name="limit"
 							checked={crawlerConfig.limit}
 							onChange={(e) => toggle(e)}
+							disabled={crawlerConfig.running}
 						/>
 						<EuiSpacer size="s" />
 					</div>
@@ -77,6 +82,7 @@ export const Configuration = () => {
 						style={{ width: 100 }}
 						value={crawlerConfig.maxRequestLimit}
 						aria-label="maximal amount of relative hyperlinks"
+						disabled={crawlerConfig.running}
 						onChange={(e) =>
 							e.target.value != "" &&
 							e.target.value >= 1 &&

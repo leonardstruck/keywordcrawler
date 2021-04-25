@@ -36,7 +36,7 @@ export const DomainTable = () => {
 			name: "Actions",
 			actions,
 			footer: (
-				<EuiLink onClick={() => dispatch(clearDomains())}>Clear Data</EuiLink>
+				<EuiLink onClick={() => dispatch(clearDomains())}>Delete All</EuiLink>
 			),
 		},
 	];

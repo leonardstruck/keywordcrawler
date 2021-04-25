@@ -3,6 +3,7 @@ import { EuiFlexGroup, EuiFlexItem, EuiPanel, EuiTitle } from "@elastic/eui";
 import React from "react";
 import { Configuration } from "./configuration/Configuration.jsx";
 import { Domains } from "./domains/Domains.jsx";
+import { Controls } from "./controls/Controls.jsx";
 
 export const MainView = () => {
 	const fullHeight = {
@@ -22,8 +23,10 @@ export const MainView = () => {
 							<Configuration />
 						</EuiPanel>
 					</EuiFlexItem>
-					<EuiFlexItem>
-						<EuiPanel></EuiPanel>
+					<EuiFlexItem grow={false}>
+						<EuiPanel>
+							<Controls />
+						</EuiPanel>
 					</EuiFlexItem>
 				</EuiFlexGroup>
 			</EuiFlexItem>
