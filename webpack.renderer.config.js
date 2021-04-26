@@ -1,5 +1,4 @@
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
-const webpack = require("webpack");
 const rules = require("./webpack.rules");
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -18,4 +17,7 @@ module.exports = {
 		isDevelopment &&
 			new ReactRefreshWebpackPlugin({ overlay: { sockIntegration: "whm" } }),
 	].filter(Boolean),
+	output: {
+		publicPath: "./../",
+	},
 };
