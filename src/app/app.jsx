@@ -13,11 +13,11 @@ import { ipcRenderer } from "electron";
 
 ipcRenderer
 	.invoke("getDarkTheme")
-	.then((result) => {
+	.then(async (result) => {
 		if (result) {
-			import("@elastic/eui/dist/eui_theme_dark.css");
+			await import("@elastic/eui/dist/eui_theme_dark.css");
 		} else {
-			import("@elastic/eui/dist/eui_theme_light.css");
+			await import("@elastic/eui/dist/eui_theme_light.css");
 		}
 	})
 	.then(() => {

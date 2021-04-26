@@ -16,6 +16,7 @@ const createWindow = () => {
 	const mainWindow = new BrowserWindow({
 		width: 1000,
 		height: 700,
+		show: false,
 		resizable: false,
 		webPreferences: {
 			nodeIntegration: true,
@@ -29,6 +30,9 @@ const createWindow = () => {
 
 	// Open the DevTools.
 	mainWindow.webContents.openDevTools();
+	mainWindow.webContents.on("did-finish-load", () => {
+		mainWindow.show();
+	});
 };
 
 // This method will be called when Electron has finished
