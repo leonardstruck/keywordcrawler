@@ -21,6 +21,8 @@ export const Domains = () => {
 	const [isImportDialogVisible, setIsImportDialogVisible] = useState(false);
 	const [importState, setImportState] = useState({ fileSelected: false });
 	const [invalidInput, setInvalidInput] = useState(false);
+	const domains = useSelector((state) => state.domains);
+
 	const dispatch = useDispatch();
 
 	return (
@@ -69,7 +71,7 @@ export const Domains = () => {
 				</EuiFlexGroup>
 			</EuiForm>
 			<EuiSpacer size="m" />
-			{!crawlerConfig.running && <DomainTable />}
+			<DomainTable />
 			<ImportDialog
 				isImportDialogVisible={isImportDialogVisible}
 				setImportState={setImportState}

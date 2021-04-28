@@ -1,26 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = [];
+const initialState = {};
 
 export const domainSlice = createSlice({
 	name: "domains",
 	initialState,
 	reducers: {
 		addDomain: (state, action) => {
-			state.unshift({ ...action.payload });
+			return { ...state, [action.payload.id]: action.payload };
 		},
 		deleteDomain: (state, action) => {
-			state.splice(
-				state.findIndex(function (i) {
-					return i.id === action.payload.id;
-				}),
-				1
-			);
+			delete state[action.payload.id];
 		},
 		addBulkDomain: (state, action) => {
-			state.push(...action.payload);
+			return { ...action.payload, ...state };
 		},
 		clearDomains: () => initialState,
+		changeStatus: (state, action) => {
+			state[action.payload.id].status = action.payload.newStatus;
+		},
 	},
 });
 
@@ -30,6 +28,7 @@ export const {
 	deleteDomain,
 	addBulkDomain,
 	clearDomains,
+	changeStatus,
 } = domainSlice.actions;
 
 export default domainSlice.reducer;

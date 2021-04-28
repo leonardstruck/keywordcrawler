@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import {
 	EuiOverlayMask,
@@ -18,6 +18,18 @@ import fileLoader from "./fileLoader";
 
 export const ImportDialog = (props) => {
 	const dispatch = useDispatch();
+	useEffect(() => {
+		if (props.importState.fileSelected) {
+			fileLoader(props.importState.file.path)
+				.then((res) => {
+					dispatch(addBulkDomain(res));
+				})
+				.then(() => {
+					props.setImportState({ fileSelected: false });
+					props.setIsImportDialogVisible(false);
+				});
+		}
+	}, [props.importState.fileSelected]);
 
 	let importDialog = null;
 
@@ -34,11 +46,6 @@ export const ImportDialog = (props) => {
 					</EuiPanel>
 				</EuiOverlayMask>
 			);
-			fileLoader(props.importState.file.path).then((res) => {
-				dispatch(addBulkDomain(res));
-				props.setImportState({ fileSelected: false });
-				props.setIsImportDialogVisible(false);
-			});
 		} else {
 			importDialog = (
 				<EuiOverlayMask>

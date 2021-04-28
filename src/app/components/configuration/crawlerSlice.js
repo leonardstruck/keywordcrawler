@@ -6,7 +6,7 @@ const initialState = {
 	relativeCrawling: false,
 	skipOnOccurance: false,
 	limit: true,
-	maxRequestLimit: 100,
+	maxRequestLimit: 10,
 };
 
 export const crawlerSlice = createSlice({

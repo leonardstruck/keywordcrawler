@@ -1,0 +1,11 @@
+{
+  "name": "crawler",
+  "version": "1.0.0",
+  "main": "crawler.js",
+  "license": "MIT",
+  "dependencies": {
+    "apify": "^1.1.2",
+    "cheerio": "^1.0.0-rc.6",
+    "electron-rebuild": "^2.3.5"
+  }
+}

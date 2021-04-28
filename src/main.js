@@ -1,9 +1,19 @@
+import { fork } from "child_process";
 import installExtension, {
 	REDUX_DEVTOOLS,
 	REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
 const { app, BrowserWindow, nativeTheme, ipcMain } = require("electron");
 const path = require("path");
+const log = require("electron-log");
+Object.assign(console, log.functions);
+
+const isDevelopment = process.env.NODE_ENV === "development";
+
+process.env.APIFY_LOCAL_STORAGE_DIR = path.join(
+	app.getPath("userData"),
+	"apify_storage"
+);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -11,9 +21,11 @@ if (require("electron-squirrel-startup")) {
 	app.quit();
 }
 
+let mainWindow;
+
 const createWindow = () => {
 	// Create the browser window.
-	const mainWindow = new BrowserWindow({
+	mainWindow = new BrowserWindow({
 		width: 1000,
 		height: 700,
 		show: false,
@@ -21,17 +33,18 @@ const createWindow = () => {
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: false,
+			webSecurity: false,
 		},
 	});
-	installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS]);
+	isDevelopment && installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS]);
 
 	// and load the index.html of the app.
 	mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
 	// Open the DevTools.
-	mainWindow.webContents.openDevTools();
 	mainWindow.webContents.on("did-finish-load", () => {
 		mainWindow.show();
+		isDevelopment && mainWindow.webContents.openDevTools();
 	});
 };
 
@@ -64,4 +77,35 @@ app.on("activate", () => {
 ipcMain.handle("getDarkTheme", async (event) => {
 	const result = nativeTheme.shouldUseDarkColors;
 	return result;
+});
+
+ipcMain.handle("startCrawler", async (event, ...args) => {
+	try {
+		const crawler = fork(path.resolve(__dirname, "crawler/crawler.js"));
+		crawler.send({ ...args });
+		crawler.on("message", (msg) => {
+			switch (msg.type) {
+				case "currentCrawl":
+					mainWindow.webContents.send("currentCrawl", msg.payload);
+					break;
+				case "keywordOccurance":
+					mainWindow.webContents.send("keywordOccurance", msg.payload);
+					break;
+				default:
+					console.log("message from crawler", msg);
+					break;
+			}
+		});
+		ipcMain.handleOnce("stopCrawler", () => {
+			crawler.kill();
+			return { status: "stopped" };
+		});
+		crawler.on("exit", () => {
+			ipcMain.removeHandler("stopCrawler");
+			mainWindow.webContents.send("crawlerDone");
+		});
+		return { status: "started" };
+	} catch (err) {
+		return { status: "error", err };
+	}
 });
