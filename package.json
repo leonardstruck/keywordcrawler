@@ -1,6 +1,6 @@
 {
-	"name": "crawlo",
-	"productName": "crawlo",
+	"name": "keywordcrawler",
+	"productName": "keywordcrawler",
 	"version": "1.0.0",
 	"description": "My Electron application description",
 	"main": ".webpack/main",
@@ -20,6 +20,9 @@
 	"license": "MIT",
 	"config": {
 		"forge": {
+			"packagerConfig": {
+				"icon": "./src/assets/icon.icns"
+			},
 			"makers": [
 				{
 					"name": "@electron-forge/maker-squirrel",

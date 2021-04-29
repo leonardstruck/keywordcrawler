@@ -3,12 +3,51 @@ import installExtension, {
 	REDUX_DEVTOOLS,
 	REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
-const { app, BrowserWindow, nativeTheme, ipcMain, shell } = require("electron");
+const {
+	app,
+	BrowserWindow,
+	nativeTheme,
+	ipcMain,
+	shell,
+	autoUpdater,
+	dialog,
+} = require("electron");
 const path = require("path");
 const log = require("electron-log");
 Object.assign(console, log.functions);
 
 const isDevelopment = process.env.NODE_ENV === "development";
+
+if (!isDevelopment) {
+	const server = "https://keywordcrawler.leonardstruck.com";
+	const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
+
+	autoUpdater.setFeedURL(feed);
+
+	setInterval(() => {
+		autoUpdater.checkForUpdates();
+	}, 10000);
+
+	autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
+		const dialogOpts = {
+			type: "info",
+			buttons: ["Restart", "Later"],
+			title: "Application Update",
+			message: process.platform === "win32" ? releaseNotes : releaseName,
+			detail:
+				"A new version has been downloaded. Restart the application to apply the updates.",
+		};
+
+		dialog.showMessageBox(dialogOpts).then((returnValue) => {
+			if (returnValue.response === 0) autoUpdater.quitAndInstall();
+		});
+	});
+
+	autoUpdater.on("error", (message) => {
+		console.error("There was a problem updating the application");
+		console.error(message);
+	});
+}
 
 process.env.APIFY_LOCAL_STORAGE_DIR = path.join(
 	app.getPath("userData"),
