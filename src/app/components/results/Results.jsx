@@ -1,10 +1,17 @@
 import {
 	EuiBadge,
+	EuiButton,
 	EuiCallOut,
+	EuiCheckbox,
 	EuiDataGrid,
 	EuiEmptyPrompt,
+	EuiFlexGroup,
+	EuiFlexItem,
+	EuiLink,
 	EuiLoadingSpinner,
+	EuiPanel,
 	EuiSpacer,
+	EuiText,
 } from "@elastic/eui";
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,17 +35,35 @@ export const Results = () => {
 	const results = useSelector((state) => state.results);
 	const domains = useSelector((state) => state.domains);
 	const crawlerIsRunning = useSelector((state) => state.crawler.running);
-
-	const filteredKeywords = ["kommunale"];
+	const [filteredKeywords, setFilteredKeywords] = useState([]);
 
 	useEffect(() => {
 		const filteredDataToState = [];
-		for (let key of Object.keys(results)) {
-			for (let keyword of Object.keys(results[key])) {
-				console.log(keyword);
-			}
+		if (filteredKeywords.length === 0) {
+			Object.keys(results).map((result) => {
+				filteredDataToState.push({ id: result, keywords: results[result] });
+			});
+		} else if (filteredKeywords.length === 1) {
+			Object.keys(results).map((result) => {
+				if (Object.keys(results[result]).includes(filteredKeywords[0])) {
+					filteredDataToState.push({ id: result, keywords: results[result] });
+				}
+			});
+		} else if (filteredKeywords.length > 1) {
+			Object.keys(results).map((result) => {
+				let addToState = true;
+				filteredKeywords.map((keyword) => {
+					if (!Object.keys(results[result]).includes(keyword)) {
+						addToState = false;
+					}
+				});
+				if (addToState) {
+					filteredDataToState.push({ id: result, keywords: results[result] });
+				}
+			});
 		}
-	}, [results]);
+		setFilteredData(filteredDataToState);
+	}, [results, filteredKeywords]);
 
 	const numberPending = Object.keys(domains).filter(
 		(domain) => domains[domain].status === "pending"
@@ -68,63 +93,128 @@ export const Results = () => {
 	}
 
 	return (
-		<div style={{ height: 400 }}>
-			<EuiSpacer size="m" />
-			<EuiDataGrid
-				rowCount={Object.keys(results).length}
-				columns={[
-					{
-						id: "domain",
-						actions: {
-							showMoveLeft: false,
-							showMoveRight: false,
-							showHide: false,
-						},
-						isResizable: false,
-					},
-					{
-						id: "keywords",
-						actions: {
-							showMoveLeft: false,
-							showMoveRight: false,
-							showHide: false,
-						},
-						isResizable: false,
-					},
-				]}
-				toolbarVisibility={{
-					showColumnSelector: false,
-					showStyleSelector: false,
-				}}
-				columnVisibility={{
-					visibleColumns: ["domain", "keywords"],
-					setVisibleColumns: () => {},
-				}}
-				renderCellValue={({ rowIndex, columnId }) => {
-					switch (columnId) {
-						case "domain":
-							return (
-								<Fragment>
-									{domains[Object.keys(results)[rowIndex]].domain}
-								</Fragment>
-							);
-							break;
-						case "keywords":
-							return (
-								<Fragment>
-									{Object.keys(results[Object.keys(results)[rowIndex]]).map(
-										(keyword) => {
-											return <EuiBadge key={keyword}>{keyword}</EuiBadge>;
+		<div>
+			<EuiFlexGroup>
+				<EuiFlexItem>
+					<EuiPanel style={{ height: 100, overflowY: "scroll" }}>
+						{keywords.map((keyword) => (
+							<EuiCheckbox
+								label={keyword.label}
+								id={keyword.label}
+								checked={filteredKeywords.includes(keyword.label)}
+								onChange={(e) => {
+									if (e.currentTarget.checked) {
+										setFilteredKeywords([
+											...filteredKeywords,
+											e.currentTarget.id,
+										]);
+									} else {
+										const filteredKeywordsToState = [...filteredKeywords];
+										const index = filteredKeywordsToState.indexOf(
+											e.currentTarget.id
+										);
+										if (index > -1) {
+											filteredKeywordsToState.splice(index, 1);
 										}
-									)}
-								</Fragment>
-							);
-						default:
-							return <h1>not configured</h1>;
-							break;
-					}
-				}}
-			/>
+										setFilteredKeywords(filteredKeywordsToState);
+									}
+								}}
+							/>
+						))}
+					</EuiPanel>
+				</EuiFlexItem>
+				<EuiFlexItem>
+					<EuiButton
+						iconType="exportAction"
+						size="m"
+						onClick={() => console.log("clicked")}
+						disabled={filteredData.length === 0}
+						color="secondary"
+					>
+						{filteredData.length === 0 && "Nothing to export"}
+						{filteredData.length === 1 && "Export 1 result"}
+						{filteredData.length > 1 &&
+							"Export " + filteredData.length + " results"}
+					</EuiButton>
+				</EuiFlexItem>
+			</EuiFlexGroup>
+			<EuiSpacer size="m" />
+
+			<EuiPanel style={{ height: 400 }}>
+				<EuiDataGrid
+					rowCount={filteredData.length}
+					columns={[
+						{
+							id: "domain",
+							actions: {
+								showMoveLeft: false,
+								showMoveRight: false,
+								showHide: false,
+							},
+							cellActions: [
+								({ rowIndex, columnId, Component }) => {
+									return (
+										<Component
+											onClick={() =>
+												ipcRenderer.send(
+													"openUrl",
+													"http://" + domains[filteredData[rowIndex].id].domain
+												)
+											}
+											iconType="link"
+											aria-label="open domain in browser"
+										>
+											Open in Browser
+										</Component>
+									);
+								},
+							],
+							isResizable: false,
+						},
+						{
+							id: "keywords",
+							actions: {
+								showMoveLeft: false,
+								showMoveRight: false,
+								showHide: false,
+							},
+							isResizable: false,
+						},
+					]}
+					toolbarVisibility={{
+						showColumnSelector: false,
+						showStyleSelector: false,
+					}}
+					columnVisibility={{
+						visibleColumns: ["domain", "keywords"],
+						setVisibleColumns: () => {},
+					}}
+					renderCellValue={({ rowIndex, columnId }) => {
+						switch (columnId) {
+							case "domain":
+								return (
+									<Fragment>
+										{domains[filteredData[rowIndex].id].domain}
+									</Fragment>
+								);
+								break;
+							case "keywords":
+								return (
+									<Fragment>
+										{Object.keys(filteredData[rowIndex].keywords).map(
+											(keyword) => {
+												return <EuiBadge key={keyword}>{keyword}</EuiBadge>;
+											}
+										)}
+									</Fragment>
+								);
+							default:
+								return <h1>not configured</h1>;
+								break;
+						}
+					}}
+				/>
+			</EuiPanel>
 		</div>
 	);
 };

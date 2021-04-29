@@ -67,6 +67,7 @@ process.on("message", (args) => {
 			handlePageFunction,
 			handleFailedRequestFunction,
 			maxRequestRetries: 0,
+			maxConcurrency: 20,
 		});
 		// Run the crawler
 		await crawler.run();

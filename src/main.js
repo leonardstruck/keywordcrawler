@@ -3,7 +3,7 @@ import installExtension, {
 	REDUX_DEVTOOLS,
 	REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
-const { app, BrowserWindow, nativeTheme, ipcMain } = require("electron");
+const { app, BrowserWindow, nativeTheme, ipcMain, shell } = require("electron");
 const path = require("path");
 const log = require("electron-log");
 Object.assign(console, log.functions);
@@ -74,6 +74,10 @@ app.on("activate", () => {
 // code. You can also put them in separate files and import them here.
 
 //get Theme
+
+ipcMain.on("openUrl", (event, args) => {
+	shell.openExternal(args);
+});
 ipcMain.handle("getDarkTheme", async (event) => {
 	const result = nativeTheme.shouldUseDarkColors;
 	return result;
