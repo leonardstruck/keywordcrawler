@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
 	running: false,
-	crawlSitemap: true,
+	wasRunningBefore: false,
+	crawlSitemap: false,
 	relativeCrawling: false,
-	skipOnOccurance: false,
 	limit: true,
 	maxRequestLimit: 10,
 };
@@ -21,6 +21,10 @@ export const crawlerSlice = createSlice({
 		},
 		changeRunningState: (state, action) => {
 			state.running = action.payload;
+			state.wasRunningBefore = true;
+		},
+		resetRunningState: (state, action) => {
+			state.wasRunningBefore = false;
 		},
 	},
 });
@@ -30,6 +34,7 @@ export const {
 	changeConfig,
 	changeLimit,
 	changeRunningState,
+	resetRunningState,
 } = crawlerSlice.actions;
 
 export default crawlerSlice.reducer;

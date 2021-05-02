@@ -19,7 +19,7 @@ export const MainView = () => {
 	const results = useSelector((state) => state.results);
 	const domains = useSelector((state) => state.domains);
 	const numberPending = Object.keys(domains).filter(
-		(domain) => domains[domain].status === "pending"
+		(domain) => Object.keys(domains[domain].status).length === 0
 	).length;
 
 	const noResultsAfterCrawl =

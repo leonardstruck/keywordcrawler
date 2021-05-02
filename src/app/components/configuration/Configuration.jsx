@@ -35,27 +35,15 @@ export const Configuration = () => {
 				/>
 			</EuiFormRow>
 			<EuiHorizontalRule />
-			<EuiFormFieldset legend={{ children: "crawling algorithm fine tuning" }}>
+			<EuiFormFieldset legend={{ children: "Configuration" }} disabled={true}>
 				<EuiSwitch
-					label="crawl for keyword occurance in sitemap"
+					label="crawl sitemap if provided"
 					checked={crawlerConfig.crawlSitemap}
 					onChange={(e) => toggle(e)}
 					name="crawlSitemap"
 					disabled={crawlerConfig.running}
 				/>
 				<EuiSpacer size="s" />
-				{keywords.length > 1 && (
-					<div>
-						<EuiSwitch
-							label="skip further crawling on occurance of one keyword"
-							checked={crawlerConfig.skipOnOccurance}
-							onChange={(e) => toggle(e)}
-							name="skipOnOccurance"
-							disabled={crawlerConfig.running}
-						/>
-						<EuiSpacer size="s" />
-					</div>
-				)}
 				<EuiSwitch
 					label="add relative hyperlinks to queue"
 					checked={crawlerConfig.relativeCrawling}
@@ -67,7 +55,7 @@ export const Configuration = () => {
 				{crawlerConfig.relativeCrawling && (
 					<div>
 						<EuiSwitch
-							label="limit amount of relative hyperlinks per crawl"
+							label="recursive crawling"
 							name="limit"
 							checked={crawlerConfig.limit}
 							onChange={(e) => toggle(e)}
@@ -77,18 +65,20 @@ export const Configuration = () => {
 					</div>
 				)}
 				{crawlerConfig.limit && crawlerConfig.relativeCrawling && (
-					<EuiFieldNumber
-						compressed
-						style={{ width: 100 }}
-						value={crawlerConfig.maxRequestLimit}
-						aria-label="maximal amount of relative hyperlinks"
-						disabled={crawlerConfig.running}
-						onChange={(e) =>
-							e.target.value != "" &&
-							e.target.value >= 1 &&
-							dispatch(changeLimit(e.target.value))
-						}
-					/>
+					<EuiFormRow label="set a max depth limit for recursive crawling">
+						<EuiFieldNumber
+							compressed
+							style={{ width: 100 }}
+							value={crawlerConfig.maxRequestLimit}
+							aria-label="maximal amount of relative hyperlinks"
+							disabled={crawlerConfig.running}
+							onChange={(e) =>
+								e.target.value != "" &&
+								e.target.value >= 1 &&
+								dispatch(changeLimit(e.target.value))
+							}
+						/>
+					</EuiFormRow>
 				)}
 			</EuiFormFieldset>
 		</div>

@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { ipcRenderer } from "electron";
 import { addResult } from "./resultsSlice";
+import { createObjectCsvWriter } from "csv-writer";
 
 export const Results = () => {
 	const [filteredData, setFilteredData] = useState([]);
@@ -74,6 +75,42 @@ export const Results = () => {
 		numberPending === 0 &&
 		Object.keys(results).length === 0;
 
+	const handleExportButton = () => {
+		ipcRenderer.invoke("getSavePath").then((res) => {
+			if (res.canceled) {
+				return;
+			} else {
+				const keywordsArray = [];
+				keywords.map((keyword) =>
+					keywordsArray.push({ id: keyword.label, title: keyword.label })
+				);
+				const csv = createObjectCsvWriter({
+					path: res.filePath,
+					header: [
+						{
+							id: "domain",
+							title: "DOMAIN",
+						},
+						...keywordsArray,
+					],
+				});
+				const records = [];
+				filteredData.map((entity) => {
+					const keywordsInfo = {};
+					keywordsArray.map((keyword) => {
+						keywordsInfo[keyword.id] = results[entity.id][keyword.id]
+							? "true"
+							: "false";
+					});
+					records.push({ domain: domains[entity.id].domain, ...keywordsInfo });
+				});
+				csv.writeRecords(records).then(() => {
+					console.log("...Done");
+				});
+			}
+		});
+	};
+
 	if (Object.keys(results).length === 0 && crawlerIsRunning) {
 		return (
 			<EuiEmptyPrompt
@@ -99,6 +136,7 @@ export const Results = () => {
 					<EuiPanel style={{ height: 100, overflowY: "scroll" }}>
 						{keywords.map((keyword) => (
 							<EuiCheckbox
+								key={keyword.label}
 								label={keyword.label}
 								id={keyword.label}
 								checked={filteredKeywords.includes(keyword.label)}
@@ -127,8 +165,8 @@ export const Results = () => {
 					<EuiButton
 						iconType="exportAction"
 						size="m"
-						onClick={() => console.log("clicked")}
-						disabled={filteredData.length === 0}
+						onClick={handleExportButton}
+						disabled={filteredData.length === 0 || crawlerIsRunning}
 						color="secondary"
 					>
 						{filteredData.length === 0 && "Nothing to export"}

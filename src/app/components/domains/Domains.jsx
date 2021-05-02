@@ -34,9 +34,7 @@ export const Domains = () => {
 					if (isValidDomain(domain, { subdomain: true })) {
 						setDomain("");
 						const uniqueId = uuid();
-						dispatch(
-							addDomain({ domain: domain, id: uniqueId, status: "pending" })
-						);
+						dispatch(addDomain({ domain: domain, id: uniqueId, status: {} }));
 					} else {
 						setInvalidInput(true);
 					}

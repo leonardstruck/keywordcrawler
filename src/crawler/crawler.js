@@ -16,15 +16,28 @@ process.on("message", (args) => {
 			await requestQueue.addRequest({
 				url: "http://" + domains[domain].domain,
 				uniqueKey: domain,
+				userData: { crawlType: "initial" },
 			});
 		});
 
 		// Function called for each URL
 		const handlePageFunction = async ({ request, $, body }) => {
-			process.send({
-				type: "currentCrawl",
-				payload: { url: request.url, id: request.uniqueKey },
-			});
+			switch (request.userData.crawlType) {
+				case "initial":
+					process.send({
+						type: "currentCrawl",
+						payload: {
+							url: request.url,
+							id: request.uniqueKey,
+							step: request.userData.crawlType,
+							status: 200,
+						},
+					});
+					break;
+				default:
+					throw new Error("No message configured for this crawlType");
+			}
+
 			console.log("Crawling " + request.url);
 			const stringBody = body.toString().toLowerCase();
 			keywords.forEach((keyword) => {
@@ -58,7 +71,12 @@ process.on("message", (args) => {
 			console.log("failed ", request.url, error);
 			process.send({
 				type: "currentCrawl",
-				payload: { url: request.url, id: request.uniqueKey },
+				payload: {
+					url: request.url,
+					id: request.uniqueKey,
+					step: request.userData.crawlType,
+					status: error.toString(),
+				},
 			});
 		};
 		// Create a CheerioCrawler

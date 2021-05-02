@@ -17,7 +17,17 @@ export const domainSlice = createSlice({
 		},
 		clearDomains: () => initialState,
 		changeStatus: (state, action) => {
-			state[action.payload.id].status = action.payload.newStatus;
+			state[action.payload.id].status[action.payload.newStatus.step] =
+				action.payload.newStatus.status;
+		},
+		resetStatus: (state, action) => {
+			const newObj = {};
+
+			Object.keys(state).forEach((domain) => {
+				newObj[domain] = { ...state[domain], status: {} };
+			});
+
+			return newObj;
 		},
 	},
 });
@@ -29,6 +39,7 @@ export const {
 	addBulkDomain,
 	clearDomains,
 	changeStatus,
+	resetStatus,
 } = domainSlice.actions;
 
 export default domainSlice.reducer;

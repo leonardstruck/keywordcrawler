@@ -152,3 +152,11 @@ ipcMain.handle("startCrawler", async (event, ...args) => {
 		return { status: "error", err };
 	}
 });
+
+ipcMain.handle("getSavePath", async (event) => {
+	const result = await dialog.showSaveDialog(mainWindow, {
+		properties: "createDirectory",
+		defaultPath: "export.csv",
+	});
+	return result;
+});

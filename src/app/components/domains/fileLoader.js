@@ -11,7 +11,7 @@ export default function (fileLocation) {
 			(line) => {
 				if (line.length > 0 && isValidDomain(line)) {
 					const uid = uuid();
-					result[uid] = { domain: line, id: uid, status: "pending" };
+					result[uid] = { domain: line, id: uid, status: {} };
 				}
 			},
 			(err) => {

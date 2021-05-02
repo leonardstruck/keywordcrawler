@@ -8,10 +8,14 @@ import {
 	EuiSpacer,
 	EuiText,
 } from "@elastic/eui";
-import { changeRunningState } from "../configuration/crawlerSlice";
+import {
+	changeRunningState,
+	resetRunningState,
+} from "../configuration/crawlerSlice";
 import { ipcRenderer } from "electron";
-import { changeStatus } from "../domains/domainSlice";
+import { changeStatus, resetStatus } from "../domains/domainSlice";
 import ProgressTimer from "react-progress-timer";
+import { clearResults } from "../results/resultsSlice";
 
 export const Controls = () => {
 	const dispatch = useDispatch();
@@ -24,7 +28,12 @@ export const Controls = () => {
 		if (mounted) {
 			ipcRenderer.on("currentCrawl", (event, args) => {
 				setCurrentCrawl("crawling " + args.url);
-				dispatch(changeStatus({ id: args.id, newStatus: "crawled" }));
+				dispatch(
+					changeStatus({
+						id: args.id,
+						newStatus: { step: args.step, status: args.status },
+					})
+				);
 			});
 		}
 		return () => {
@@ -55,10 +64,26 @@ export const Controls = () => {
 		}
 	};
 
+	const handleResetClick = () => {
+		dispatch(resetStatus());
+		dispatch(resetRunningState());
+		dispatch(changeRunningState(!crawlerConfig.running));
+		dispatch(clearResults());
+		ipcRenderer
+			.invoke("startCrawler", domains, crawlerConfig, keywords)
+			.then((res) => {
+				console.log("result from main", res);
+			});
+		ipcRenderer.once("crawlerDone", () => {
+			dispatch(changeRunningState(false));
+			setCurrentCrawl("initializing crawler");
+		});
+	};
+
 	const queueLength = Object.keys(domains).length;
-	const queueDone = Object.keys(domains).filter(
-		(key) => domains[key].status !== "pending"
-	).length;
+	const queueDone = Object.keys(domains).filter((key) => {
+		return Object.keys(domains[key].status).length !== 0;
+	}).length;
 	const progressProps = {};
 	if (queueDone > 0) {
 		progressProps.value = queueDone;
@@ -96,9 +121,9 @@ export const Controls = () => {
 						<EuiFlexItem>
 							<EuiText size="xs" textAlign="right">
 								{
-									Object.keys(domains).filter(
-										(key) => domains[key].status !== "pending"
-									).length
+									Object.keys(domains).filter((key) => {
+										return Object.keys(domains[key].status).length !== 0;
+									}).length
 								}
 								/{Object.keys(domains).length}
 							</EuiText>
@@ -108,16 +133,29 @@ export const Controls = () => {
 					<EuiSpacer size="s" />
 				</div>
 			)}
-			<EuiButton
-				iconType={crawlerConfig.running ? "cross" : "play"}
-				fill
-				fullWidth
-				color={crawlerConfig.running ? "danger" : "secondary"}
-				onClick={handleButtonClick}
-				disabled={!(keywords.length > 0 && Object.keys(domains).length > 0)}
-			>
-				{crawlerConfig.running ? "Abort crawling" : "Start crawling"}
-			</EuiButton>
+			{(crawlerConfig.wasRunningBefore && !crawlerConfig.running && (
+				<EuiButton
+					iconType="refresh"
+					fill
+					fullWidth
+					color="secondary"
+					onClick={handleResetClick}
+					disabled={!(keywords.length > 0 && Object.keys(domains).length > 0)}
+				>
+					Reset & Crawl again
+				</EuiButton>
+			)) || (
+				<EuiButton
+					iconType={crawlerConfig.running ? "cross" : "play"}
+					fill
+					fullWidth
+					color={crawlerConfig.running ? "danger" : "secondary"}
+					onClick={handleButtonClick}
+					disabled={!(keywords.length > 0 && Object.keys(domains).length > 0)}
+				>
+					{crawlerConfig.running ? "Cancel" : "Start"}
+				</EuiButton>
+			)}
 		</div>
 	);
 };
