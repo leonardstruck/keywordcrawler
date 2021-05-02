@@ -1,11 +1,14 @@
 {
-  "name": "crawler",
-  "version": "1.0.0",
-  "main": "crawler.js",
-  "license": "MIT",
-  "dependencies": {
-    "apify": "^1.1.2",
-    "cheerio": "^1.0.0-rc.6",
-    "electron-rebuild": "^2.3.5"
-  }
+	"name": "crawler",
+	"version": "1.0.0",
+	"main": "crawler.js",
+	"scripts": {
+		"rebuild": "electron-rebuild -f -w better-sqlite3 uuid/v4"
+	},
+	"license": "MIT",
+	"dependencies": {
+		"apify": "^1.1.2",
+		"cheerio": "^1.0.0-rc.6",
+		"electron-rebuild": "^2.3.5"
+	}
 }
