@@ -9,8 +9,7 @@
 		"package": "electron-forge package",
 		"make": "electron-forge make",
 		"publish": "electron-forge publish",
-		"lint": "echo \"No linting configured\"",
-		"rebuild": "electron-rebuild -f -w better-sqlite3 uuid/v4"
+		"lint": "echo \"No linting configured\""
 	},
 	"keywords": [],
 	"author": {
