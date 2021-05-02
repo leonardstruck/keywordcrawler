@@ -31,6 +31,9 @@
 				"osxNotarize": {
 					"appleId": "leonard@blockform.at",
 					"appleIdPassword": "@keychain:Application Loader: leonard@blockform.at"
+				},
+				"win32metadata": {
+					"CompanyName": "keywordcrawler"
 				}
 			},
 			"publishers": [
@@ -50,7 +53,7 @@
 				{
 					"name": "@electron-forge/maker-squirrel",
 					"config": {
-						"name": "crawlo"
+						"name": "keywordcrawler"
 					}
 				},
 				{
