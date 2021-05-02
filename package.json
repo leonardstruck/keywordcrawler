@@ -1,7 +1,7 @@
 {
 	"name": "keywordcrawler",
 	"productName": "keywordcrawler",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "My Electron application description",
 	"main": ".webpack/main",
 	"scripts": {

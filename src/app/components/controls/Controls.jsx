@@ -15,7 +15,7 @@ import {
 import { ipcRenderer } from "electron";
 import { changeStatus, resetStatus } from "../domains/domainSlice";
 import ProgressTimer from "react-progress-timer";
-import { clearResults } from "../results/resultsSlice";
+import { clearResults, addResult } from "../results/resultsSlice";
 
 export const Controls = () => {
 	const dispatch = useDispatch();
@@ -39,6 +39,15 @@ export const Controls = () => {
 		return () => {
 			mounted = false;
 			ipcRenderer.removeAllListeners("currentCrawl");
+		};
+	});
+
+	useEffect(() => {
+		ipcRenderer.on("keywordOccurance", (event, args) => {
+			dispatch(addResult(args));
+		});
+		return () => {
+			ipcRenderer.removeAllListeners("keywordOccurance");
 		};
 	});
 

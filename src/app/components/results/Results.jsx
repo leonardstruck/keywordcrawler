@@ -14,23 +14,14 @@ import {
 	EuiText,
 } from "@elastic/eui";
 import React, { Fragment, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { ipcRenderer } from "electron";
-import { addResult } from "./resultsSlice";
 import { createObjectCsvWriter } from "csv-writer";
 
 export const Results = () => {
 	const [filteredData, setFilteredData] = useState([]);
-	const dispatch = useDispatch();
-	useEffect(() => {
-		ipcRenderer.on("keywordOccurance", (event, args) => {
-			dispatch(addResult(args));
-		});
-		return () => {
-			ipcRenderer.removeAllListeners("keywordOccurance");
-		};
-	});
+
 	const keywords = useSelector((state) => state.keywords);
 
 	const results = useSelector((state) => state.results);
